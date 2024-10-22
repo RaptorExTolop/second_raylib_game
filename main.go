@@ -64,9 +64,10 @@ func input() {
 
 func update() {
 	running = !rl.WindowShouldClose()
-	if frameCountPerSec > 60 {
+	if frameCountPerSec >= 60 {
 		frameCountPerSec = 0
 	}
+	fmt.Println(frameCountPerSec)
 	// gravity & jumping
 	if !collidingWithFloor {
 		falling_time += 0.0166
