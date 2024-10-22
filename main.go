@@ -64,7 +64,6 @@ func input() {
 
 func update() {
 	running = !rl.WindowShouldClose()
-	frameCountPerSec++
 	if frameCountPerSec > 60 {
 		frameCountPerSec = 0
 	}
@@ -98,6 +97,7 @@ func update() {
 	playerDir = 0
 	playerMoving = false
 	playerJumping = false
+	frameCountPerSec++
 }
 
 func draw() {
@@ -125,7 +125,7 @@ func quit() {
 func init() {
 	rl.InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window")
 	rl.SetTargetFPS(60)
-	gravity = 10
+	gravity = 12
 
 	// background inits
 	bkgl1 = rl.LoadTexture("res/background/background_layer_1.png")
