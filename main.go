@@ -36,6 +36,10 @@ var (
 	// gravity
 	gravity      float32
 	falling_time float32
+
+	// player animation
+
+	frameCountPerSec = 0
 )
 
 const ()
@@ -60,7 +64,11 @@ func input() {
 
 func update() {
 	running = !rl.WindowShouldClose()
-
+	frameCountPerSec++
+	if frameCountPerSec > 60 {
+		frameCountPerSec = 0
+	}
+	// gravity & jumping
 	if !collidingWithFloor {
 		falling_time += 0.0166
 		falling_time = rl.Clamp(falling_time, -1, 15)
@@ -70,6 +78,7 @@ func update() {
 		playerDest.Y -= 5
 	}
 
+	// player controls
 	if playerMoving {
 		if playerDir == 1 {
 			fmt.Println("left")
@@ -78,12 +87,16 @@ func update() {
 			fmt.Println("right")
 			playerDest.X += playerSpeed
 		}
+	} else {
+		if frameCountPerSec%10 == 0 {
+			fmt.Println(frameCountPerSec)
+			playerSrc.Y = 0
+			playerSrc.X = float32(56 * (frameCountPerSec / 10))
+
+		}
 	}
 	playerDir = 0
 	playerMoving = false
-	if playerJumping {
-		fmt.Println("jumping")
-	}
 	playerJumping = false
 }
 
@@ -105,7 +118,6 @@ func quit() {
 	rl.UnloadTexture(bkgl2)
 	rl.UnloadTexture(bkgl3)
 	rl.UnloadTexture(playerSprite)
-	//rl.UnloadTexture(bkgl1)
 
 	rl.CloseWindow()
 }
