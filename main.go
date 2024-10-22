@@ -7,11 +7,11 @@ import (
 )
 
 var (
-	running      bool  = true
-	bkgcolour          = rl.SkyBlue
-	screenWidth  int32 = 1280
-	screenHeight int32 = 720
-	gravity      float32
+	running            bool  = true
+	bkgcolour                = rl.SkyBlue
+	screenWidth        int32 = 1280
+	screenHeight       int32 = 720
+	collidingWithFloor bool  = true
 
 	// background stuff
 	bkgl1     rl.Texture2D
@@ -33,6 +33,9 @@ var (
 	playerSrc                   rl.Rectangle
 	playerDest                  rl.Rectangle
 	playerSpeed                 float32
+	// gravity
+	gravity      float32
+	falling_time float32
 )
 
 const ()
@@ -50,15 +53,22 @@ func input() {
 		playerDir -= 1
 	}
 	playerDir = int(rl.Clamp(float32(playerDir), -1, 1))
+	if rl.IsKeyPressed(rl.KeyL) {
+		collidingWithFloor = !collidingWithFloor
+	}
 }
 
 func update() {
 	running = !rl.WindowShouldClose()
-	/*if !playerJumping {
-		playerDest.Y += gravity
-	} else {
+
+	if !collidingWithFloor {
+		falling_time += 0.0166
+		falling_time = rl.Clamp(falling_time, -1, 15)
+		playerDest.Y += falling_time * gravity
+	} else if collidingWithFloor && playerJumping {
+		falling_time = 0
 		playerDest.Y -= 5
-	}*/
+	}
 
 	if playerMoving {
 		if playerDir == 1 {
@@ -91,13 +101,19 @@ func draw() {
 }
 
 func quit() {
+	rl.UnloadTexture(bkgl1)
+	rl.UnloadTexture(bkgl2)
+	rl.UnloadTexture(bkgl3)
+	rl.UnloadTexture(playerSprite)
+	//rl.UnloadTexture(bkgl1)
+
 	rl.CloseWindow()
 }
 
 func init() {
 	rl.InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window")
 	rl.SetTargetFPS(60)
-	gravity = 3
+	gravity = 10
 
 	// background inits
 	bkgl1 = rl.LoadTexture("res/background/background_layer_1.png")
