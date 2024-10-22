@@ -54,11 +54,11 @@ func input() {
 
 func update() {
 	running = !rl.WindowShouldClose()
-	if !playerJumping {
+	/*if !playerJumping {
 		playerDest.Y += gravity
 	} else {
 		playerDest.Y -= 5
-	}
+	}*/
 
 	if playerMoving {
 		if playerDir == 1 {
