@@ -38,6 +38,7 @@ var (
 	falling_time float32
 
 	// player animation
+	playerRunningFrame = -1
 
 	frameCountPerSec = 0
 )
@@ -50,11 +51,11 @@ func input() {
 	}
 	if rl.IsKeyDown(rl.KeyA) || rl.IsKeyDown(rl.KeyLeft) {
 		playerMoving = true
-		playerDir += 1
+		playerDir -= 1
 	}
 	if rl.IsKeyDown(rl.KeyD) || rl.IsKeyDown(rl.KeyRight) {
 		playerMoving = true
-		playerDir -= 1
+		playerDir += 1
 	}
 	playerDir = int(rl.Clamp(float32(playerDir), -1, 1))
 	if rl.IsKeyPressed(rl.KeyL) {
@@ -64,10 +65,14 @@ func input() {
 
 func update() {
 	running = !rl.WindowShouldClose()
+	frameCountPerSec++
+	if (frameCountPerSec % 3) == 0 {
+		playerRunningFrame++
+	}
 	if frameCountPerSec >= 60 {
 		frameCountPerSec = 0
 	}
-	fmt.Println(frameCountPerSec)
+	//fmt.Println(frameCountPerSec)
 	// gravity & jumping
 	if !collidingWithFloor {
 		falling_time += 0.0166
@@ -79,26 +84,28 @@ func update() {
 	}
 
 	// player controls
+
+	if frameCountPerSec%5 == 0 {
+		playerSrc.Y = 0
+		playerSrc.X = float32(56 * (frameCountPerSec / 10))
+
+	}
 	if playerMoving {
-		if playerDir == 1 {
+		if playerDir == -1 {
 			fmt.Println("left")
 			playerDest.X -= playerSpeed
-		} else if playerDir == -1 {
+			playerSrc.Y = 7 * 56
+			playerSrc.X = float32(56 * playerRunningFrame)
+		} else if playerDir == 1 {
 			fmt.Println("right")
 			playerDest.X += playerSpeed
-		}
-	} else {
-		if frameCountPerSec%10 == 0 {
-			fmt.Println(frameCountPerSec)
-			playerSrc.Y = 0
-			playerSrc.X = float32(56 * (frameCountPerSec / 10))
-
+			playerSrc.X = float32(56 * playerRunningFrame)
+			playerSrc.Y = 2 * 56
 		}
 	}
 	playerDir = 0
 	playerMoving = false
 	playerJumping = false
-	frameCountPerSec++
 }
 
 func draw() {
