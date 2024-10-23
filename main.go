@@ -39,6 +39,7 @@ var (
 
 	// player animation
 	playerRunningFrame = -1
+	playerLastDir      = 0
 
 	frameCountPerSec = 0
 )
@@ -60,6 +61,9 @@ func input() {
 	playerDir = int(rl.Clamp(float32(playerDir), -1, 1))
 	if rl.IsKeyPressed(rl.KeyL) {
 		collidingWithFloor = !collidingWithFloor
+	}
+	if playerDir == -1 || playerDir == 1 {
+		playerLastDir = playerDir
 	}
 }
 
@@ -85,11 +89,18 @@ func update() {
 
 	// player controls
 
+	// player idle animaiton
 	if frameCountPerSec%5 == 0 {
-		playerSrc.Y = 0
+		if playerLastDir == -1 {
+			playerSrc.Y = 8 * 56
+		} else if playerLastDir == 1 {
+			playerSrc.Y = 0
+		} else if playerLastDir == 0 {
+			playerSrc.Y = 0
+		}
 		playerSrc.X = float32(56 * (frameCountPerSec / 10))
-
 	}
+	// player moving & running animation
 	if playerMoving {
 		if playerDir == -1 {
 			fmt.Println("left")
