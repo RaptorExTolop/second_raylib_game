@@ -62,9 +62,9 @@ func input() {
 		playerDir += 1
 	}
 	playerDir = int(rl.Clamp(float32(playerDir), -1, 1))
-	if rl.IsKeyPressed(rl.KeyL) {
+	/*if rl.IsKeyPressed(rl.KeyL) {
 		collidingWithFloor = !collidingWithFloor
-	}
+	}*/
 	if playerDir == -1 || playerDir == 1 {
 		playerLastDir = playerDir
 	}
@@ -153,7 +153,7 @@ func quit() {
 func init() {
 	rl.InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window")
 	rl.SetTargetFPS(60)
-	gravity = 12
+	gravity = 35
 	playerJumpHeight = 56 * 4
 
 	// background inits
@@ -172,7 +172,7 @@ func init() {
 	// player inits
 	playerSprite = rl.LoadTexture("res/character/char_blue.png")
 	playerSrc = rl.NewRectangle(0, 0, 56, 56)
-	playerDest = rl.NewRectangle(0, 0, 168, 168)
+	playerDest = rl.NewRectangle(0, float32(screenHeight)-168, 168, 168)
 	playerSpeed = 3.0
 }
 
