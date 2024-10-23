@@ -34,13 +34,15 @@ var (
 	playerDest                  rl.Rectangle
 	playerSpeed                 float32
 	playerJumpHeight            int
+	playerLastKnownY            int32
 
 	// gravity
 	gravity      float32
 	falling_time float32
 
 	// player animation
-	playerRunningFrame = -1
+	playerRunningFrame = 0
+	playerJumpFrame    = 0
 	playerLastDir      = 0
 
 	frameCountPerSec = 0
@@ -51,7 +53,7 @@ const ()
 func input() {
 	if rl.IsKeyDown(rl.KeyW) || rl.IsKeyDown(rl.KeyUp) {
 		playerJumping = true
-		fmt.Println("jumping")
+		//fmt.Println("jumping")
 	}
 	if rl.IsKeyDown(rl.KeyA) || rl.IsKeyDown(rl.KeyLeft) {
 		playerMoving = true
@@ -73,11 +75,20 @@ func input() {
 func update() {
 	running = !rl.WindowShouldClose()
 	frameCountPerSec++
-	if (frameCountPerSec % 3) == 0 {
+	if (frameCountPerSec % 6) == 0 {
 		playerRunningFrame++
 	}
 	if frameCountPerSec >= 60 {
 		frameCountPerSec = 0
+	}
+	if playerRunningFrame > 7 {
+		playerRunningFrame = 0
+	}
+	if (frameCountPerSec % 3) == 0 {
+		playerJumpFrame++
+	}
+	if playerJumpFrame > 7 {
+		playerJumpFrame = 0
 	}
 	//fmt.Println(frameCountPerSec)
 	// gravity & jumping
@@ -123,6 +134,33 @@ func update() {
 	} else {
 		collidingWithFloor = false
 	}
+
+	if float32(playerLastKnownY) > playerDest.Y {
+		fmt.Println("up")
+		if playerLastDir == -1 {
+			fmt.Println("left")
+			playerSrc.Y = 9 * 56
+			playerSrc.X = float32(56 * playerJumpFrame)
+		} else if playerLastDir == 1 {
+			fmt.Println("right")
+			playerSrc.Y = 3 * 56
+			playerSrc.X = float32(56 * playerJumpFrame)
+		}
+	} else if float32(playerLastKnownY) < playerDest.Y {
+		fmt.Println("down")
+		if playerLastDir == -1 {
+			fmt.Println("left")
+			playerSrc.Y = 10 * 56
+			playerSrc.X = float32(56 * playerJumpFrame)
+		} else if playerLastDir == 1 {
+			fmt.Println("right")
+			playerSrc.Y = 4 * 56
+			playerSrc.X = float32(56 * playerJumpFrame)
+		}
+	}
+
+	playerLastKnownY = int32(playerDest.Y)
+
 	playerDir = 0
 	playerMoving = false
 	playerJumping = false
@@ -173,7 +211,7 @@ func init() {
 	playerSprite = rl.LoadTexture("res/character/char_blue.png")
 	playerSrc = rl.NewRectangle(0, 0, 56, 56)
 	playerDest = rl.NewRectangle(0, float32(screenHeight)-168, 168, 168)
-	playerSpeed = 3.0
+	playerSpeed = 4.0
 }
 
 func main() {
