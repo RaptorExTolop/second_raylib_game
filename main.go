@@ -138,22 +138,18 @@ func update() {
 	if float32(playerLastKnownY) > playerDest.Y {
 		fmt.Println("up")
 		if playerLastDir == -1 {
-			fmt.Println("left")
 			playerSrc.Y = 9 * 56
 			playerSrc.X = float32(56 * playerJumpFrame)
 		} else if playerLastDir == 1 {
-			fmt.Println("right")
 			playerSrc.Y = 3 * 56
 			playerSrc.X = float32(56 * playerJumpFrame)
 		}
 	} else if float32(playerLastKnownY) < playerDest.Y {
 		fmt.Println("down")
 		if playerLastDir == -1 {
-			fmt.Println("left")
 			playerSrc.Y = 10 * 56
 			playerSrc.X = float32(56 * playerJumpFrame)
 		} else if playerLastDir == 1 {
-			fmt.Println("right")
 			playerSrc.Y = 4 * 56
 			playerSrc.X = float32(56 * playerJumpFrame)
 		}
@@ -210,7 +206,8 @@ func init() {
 	// player inits
 	playerSprite = rl.LoadTexture("res/character/char_blue.png")
 	playerSrc = rl.NewRectangle(0, 0, 56, 56)
-	playerDest = rl.NewRectangle(0, float32(screenHeight)-168, 168, 168)
+	playerDest = rl.NewRectangle(0, 0, 168, 168)
+	//float32(screenHeight)-168
 	playerSpeed = 4.0
 }
 
