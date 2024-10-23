@@ -11,7 +11,7 @@ var (
 	bkgcolour                = rl.SkyBlue
 	screenWidth        int32 = 1280
 	screenHeight       int32 = 720
-	collidingWithFloor bool  = true
+	collidingWithFloor bool  = false
 
 	// background stuff
 	bkgl1     rl.Texture2D
@@ -33,6 +33,8 @@ var (
 	playerSrc                   rl.Rectangle
 	playerDest                  rl.Rectangle
 	playerSpeed                 float32
+	playerJumpHeight            int
+
 	// gravity
 	gravity      float32
 	falling_time float32
@@ -49,6 +51,7 @@ const ()
 func input() {
 	if rl.IsKeyDown(rl.KeyW) || rl.IsKeyDown(rl.KeyUp) {
 		playerJumping = true
+		fmt.Println("jumping")
 	}
 	if rl.IsKeyDown(rl.KeyA) || rl.IsKeyDown(rl.KeyLeft) {
 		playerMoving = true
@@ -84,7 +87,7 @@ func update() {
 		playerDest.Y += falling_time * gravity
 	} else if collidingWithFloor && playerJumping {
 		falling_time = 0
-		playerDest.Y -= 5
+		playerDest.Y -= float32(playerJumpHeight)
 	}
 
 	// player controls
@@ -103,16 +106,22 @@ func update() {
 	// player moving & running animation
 	if playerMoving {
 		if playerDir == -1 {
-			fmt.Println("left")
+			//fmt.Println("left")
 			playerDest.X -= playerSpeed
 			playerSrc.Y = 7 * 56
 			playerSrc.X = float32(56 * playerRunningFrame)
 		} else if playerDir == 1 {
-			fmt.Println("right")
+			//fmt.Println("right")
 			playerDest.X += playerSpeed
 			playerSrc.X = float32(56 * playerRunningFrame)
 			playerSrc.Y = 2 * 56
 		}
+	}
+	if playerDest.Y >= float32(screenHeight)-168 {
+		playerDest.Y = float32(screenHeight) - 168
+		collidingWithFloor = true
+	} else {
+		collidingWithFloor = false
 	}
 	playerDir = 0
 	playerMoving = false
@@ -145,6 +154,7 @@ func init() {
 	rl.InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window")
 	rl.SetTargetFPS(60)
 	gravity = 12
+	playerJumpHeight = 56 * 4
 
 	// background inits
 	bkgl1 = rl.LoadTexture("res/background/background_layer_1.png")
